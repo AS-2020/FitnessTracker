@@ -10,11 +10,9 @@ using Xamarin.Forms.Xaml;
 namespace FitnessTracker.Pages
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class NewEntryBodyWeight : ContentPage
+    public partial class ViewEntries : ContentPage
     {
-        
-
-        public NewEntryBodyWeight()
+        public ViewEntries()
         {
             InitializeComponent();
         }
@@ -24,15 +22,9 @@ namespace FitnessTracker.Pages
             Navigation.PopAsync();
         }
 
-       // private void SaveBodyweight_Clicked(object sender, EventArgs e)
-       // {
-       //     Models.BodyWeight bodyWeight = new Models.BodyWeight()
-       //     {
-       //        // DateTime = 
-       //     };
-       //
-       //     Navigation.PopAsync();
-       // }
-                
+        private void ViewBodyWeight_Clicked(object sender, EventArgs e)
+        {
+            Navigation.PushAsync(new ViewBodyWeight());
+        }
     }
 }

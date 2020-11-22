@@ -26,5 +26,10 @@ namespace FitnessTracker.Pages
         {
             System.Environment.Exit(0);
         }
+
+        private void ViewEntries_Clicked(object sender, EventArgs e)
+        {
+            Navigation.PushAsync(new ViewEntries());
+        }
     }
 }

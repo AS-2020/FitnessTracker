@@ -1,12 +1,20 @@
-﻿using System;
+﻿using FitnessTracker.Helper;
+using FitnessTracker.Models;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Text;
 
 namespace FitnessTracker.ViewModels
 {
     public class MainVm : INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public ObservableCollection<BodyWeight> BodyWeightList { get; set; }
+
         string todayDate = string.Empty;
         public string TodayDate
         {
@@ -16,14 +24,68 @@ namespace FitnessTracker.ViewModels
                 todayDate = value;
             }
         }
-
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-
-        void OnPropertyChanged(string name)
+        private string _weight;
+        public string Weight
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+            get { return _weight; }
+            set
+            {
+                _weight = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Weight"));
+            }
         }
+        private string _bodyFat;
+        public string BodyFat
+        {
+            get { return _bodyFat; }
+            set
+            {
+                _bodyFat = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Bodyfat"));
+            }
+        }
+
+        public RelayCommand SaveCommand { get; set; }
+        public RelayCommand FileExistCommand { get; set; }
+
+        public MainVm()
+        {
+            SaveCommand = new RelayCommand((o) =>
+            {
+                BodyWeightHandler.Instance.Load();
+                BodyWeightList = new ObservableCollection<BodyWeight>(BodyWeightHandler.Instance.GetBodyWeight());
+                BodyWeight bodyWeight = new BodyWeight()
+                {
+                    DateTime = DateTime.Now,
+                   // DateTime = Convert.ToDateTime(TodayDate),
+                    Weight = decimal.Parse(Weight),
+                    BodyFat = decimal.Parse(BodyFat)
+
+                };
+                BodyWeightHandler.Instance.AddBodyWeight(bodyWeight);
+                BodyWeightList.Add(bodyWeight);
+                BodyWeightHandler.Instance.Save();
+            });
+
+            FileExistCommand = new RelayCommand((o) =>
+            {
+                if (File.Exists(BodyWeightHandler.FILENAME))
+                {
+                    Console.WriteLine("File exists");
+                }
+                else
+                {
+                    Console.WriteLine("File does not exist");
+                }
+            });
+
+        }
+
+
+        //void OnPropertyChanged(string name)
+        //{
+        //    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        //}
     }
 }
+

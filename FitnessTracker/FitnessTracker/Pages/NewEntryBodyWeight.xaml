@@ -9,9 +9,9 @@
         <ContentPage.Content>
         <StackLayout HorizontalOptions="Center" VerticalOptions="Center">
             <Entry Text="{Binding TodayDate}" WidthRequest="130" />
-            <Entry Placeholder="Weight" />
-            <Entry Placeholder="Bodyfat" />
-            <Button Text="Save" Clicked="SaveBodyweight_Clicked"/>
+            <Entry Placeholder="Weight" Text="{Binding Weight}"/>
+            <Entry Placeholder="Bodyfat" Text="{Binding BodyFat}"/>
+            <Button Text="Save" Command="{Binding SaveCommand}"/> 
             <Button Text="Back" Clicked="BackButton_Clicked"/>
         </StackLayout>
     </ContentPage.Content>

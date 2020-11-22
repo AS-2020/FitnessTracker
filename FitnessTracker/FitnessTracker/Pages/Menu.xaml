@@ -5,7 +5,7 @@
     <ContentPage.Content>
         <StackLayout HorizontalOptions="Center" VerticalOptions="Center">
             <Button Text="New Entry" Clicked="NewEntry_Clicked"/>
-            <Button Text="View Entries" />
+            <Button Text="View Entries" Clicked="ViewEntries_Clicked" />
             <Button Text="Exit" Clicked="ExitButton_Clicked"/>
         </StackLayout>
     </ContentPage.Content>
