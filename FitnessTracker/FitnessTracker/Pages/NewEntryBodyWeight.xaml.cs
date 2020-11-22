@@ -12,9 +12,22 @@ namespace FitnessTracker.Pages
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class NewEntryBodyWeight : ContentPage
     {
+        
+
         public NewEntryBodyWeight()
         {
             InitializeComponent();
         }
+
+        private void BackButton_Clicked(object sender, EventArgs e)
+        {
+            Navigation.PopAsync();
+        }
+
+        private void SaveBodyweight_Clicked(object sender, EventArgs e)
+        {
+
+        }
+                
     }
 }

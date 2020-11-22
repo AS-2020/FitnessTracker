@@ -5,7 +5,7 @@
     <ContentPage.Content>
         <StackLayout HorizontalOptions="Center" VerticalOptions="Center">
             <Button Text="Bodyweight" Clicked="NewEntryBodyWeight_Clicked"/>
-            <Button class="Back_Button" Text="Back" />
+            <Button class="Back_Button" Text="Back" Clicked="BackButton_Clicked" />
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

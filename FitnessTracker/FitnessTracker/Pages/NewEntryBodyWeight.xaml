@@ -1,12 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="FitnessTracker.Pages.NewEntryBodyWeight">
-    <ContentPage.Content>
+             x:Class="FitnessTracker.Pages.NewEntryBodyWeight"
+             xmlns:vm="clr-namespace:FitnessTracker.ViewModels">
+    <ContentPage.BindingContext>
+        <vm:MainVm/>
+    </ContentPage.BindingContext>
+        <ContentPage.Content>
         <StackLayout HorizontalOptions="Center" VerticalOptions="Center">
-            <Entry Placeholder="Datum" />
+            <Entry Text="{Binding TodayDate}" WidthRequest="130" />
             <Entry Placeholder="Weight" />
             <Entry Placeholder="Bodyfat" />
+            <Button Text="Save" Clicked="SaveBodyweight_Clicked"/>
+            <Button Text="Back" Clicked="BackButton_Clicked"/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>
