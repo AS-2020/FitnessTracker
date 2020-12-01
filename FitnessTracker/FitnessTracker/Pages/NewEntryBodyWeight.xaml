@@ -11,8 +11,8 @@
             <Entry Text="{Binding TodayDate}" WidthRequest="130" />
             <Entry Placeholder="Weight" Text="{Binding Weight}"/>
             <Entry Placeholder="Bodyfat" Text="{Binding BodyFat}"/>
-            <Button Text="Save" Command="{Binding SaveCommand}"/> 
-            <Button Text="Back" Clicked="BackButton_Clicked"/>
+            <Button Text="Save" Command="{Binding SaveCommand}"/>
+            <Button Text="Back" Command="{Binding BackCommand}"/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

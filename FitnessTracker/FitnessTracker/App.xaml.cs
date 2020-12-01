@@ -9,7 +9,6 @@ namespace FitnessTracker
         public App()
         {
             InitializeComponent();
-
             MainPage = new NavigationPage(new Pages.Menu());
         }
 

@@ -6,6 +6,9 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Text;
+using Xamarin.Essentials;
+using Xamarin.Forms;
+using Xamarin.Forms.Xaml;
 
 namespace FitnessTracker.ViewModels
 {
@@ -41,23 +44,29 @@ namespace FitnessTracker.ViewModels
             set
             {
                 _bodyFat = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Bodyfat"));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("BodyFat"));
             }
         }
 
         public RelayCommand SaveCommand { get; set; }
+        public RelayCommand BackCommand { get; set; }
         public RelayCommand FileExistCommand { get; set; }
 
+        public void Back(object o)
+        {
+            Xamarin.Forms.Application.Current.MainPage.Navigation.PopAsync();
+        }
         public MainVm()
         {
+            BodyWeightHandler.Instance.Load();
+            BodyWeightList = new ObservableCollection<BodyWeight>(BodyWeightHandler.Instance.GetBodyWeight());
+
             SaveCommand = new RelayCommand((o) =>
             {
-                BodyWeightHandler.Instance.Load();
-                BodyWeightList = new ObservableCollection<BodyWeight>(BodyWeightHandler.Instance.GetBodyWeight());
                 BodyWeight bodyWeight = new BodyWeight()
                 {
                     DateTime = DateTime.Now,
-                   // DateTime = Convert.ToDateTime(TodayDate),
+                    // DateTime = Convert.ToDateTime(TodayDate),
                     Weight = decimal.Parse(Weight),
                     BodyFat = decimal.Parse(BodyFat)
 
@@ -66,6 +75,9 @@ namespace FitnessTracker.ViewModels
                 BodyWeightList.Add(bodyWeight);
                 BodyWeightHandler.Instance.Save();
             });
+
+            BackCommand = new RelayCommand(Back);
+            
 
             FileExistCommand = new RelayCommand((o) =>
             {

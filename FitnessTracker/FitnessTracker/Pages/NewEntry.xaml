@@ -1,11 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:FitnessTracker.ViewModels"
              x:Class="FitnessTracker.Pages.NewEntry">
+    <ContentPage.BindingContext>
+        <vm:MainVm/>
+    </ContentPage.BindingContext>
     <ContentPage.Content>
         <StackLayout HorizontalOptions="Center" VerticalOptions="Center">
             <Button Text="Bodyweight" Clicked="NewEntryBodyWeight_Clicked"/>
-            <Button class="Back_Button" Text="Back" Clicked="BackButton_Clicked" />
+            <Button class="Back_Button" Text="Back" Command="{Binding BackCommand}"/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Xml.Serialization;
+using Xamarin.Essentials;
 
 namespace FitnessTracker.Models
 {
@@ -35,6 +36,8 @@ namespace FitnessTracker.Models
             }
         }
         public const string FILENAME = "FileBodyWeight.txt";
+
+        public static string localPath;
         public void AddBodyWeight(BodyWeight bodyWeight)
         {
             bodyWeightList.Add(bodyWeight);
@@ -47,11 +50,12 @@ namespace FitnessTracker.Models
 
         public void Save()
         {
-           XmlSerializer ser = new XmlSerializer(bodyWeightList.GetType());
-           using (FileStream stream = File.Create(FILENAME))
-           {
-               ser.Serialize(stream, bodyWeightList);
-           }
+            //string json = JsonSerializer.Serialize(chatMessage);
+            XmlSerializer ser = new XmlSerializer(bodyWeightList.GetType());
+            using (FileStream stream = File.Create(localPath))
+            {
+                ser.Serialize(stream, bodyWeightList);
+            }
         }
         public void Load()
         {
@@ -60,7 +64,7 @@ namespace FitnessTracker.Models
                 if (File.Exists(FILENAME))
                 {
                     XmlSerializer ser = new XmlSerializer(bodyWeightList.GetType());
-                    using (FileStream stream = File.Open(FILENAME, FileMode.Open))
+                    using (FileStream stream = File.Open(localPath, FileMode.Open))
                     {
                         bodyWeightList = ser.Deserialize(stream) as List<BodyWeight>;
                     }
