@@ -4,7 +4,7 @@
              x:Class="FitnessTracker.Pages.NewEntryBodyWeight"
              xmlns:vm="clr-namespace:FitnessTracker.ViewModels">
     <ContentPage.BindingContext>
-        <vm:MainVm/>
+        <vm:MainVm />
     </ContentPage.BindingContext>
         <ContentPage.Content>
         <StackLayout HorizontalOptions="Center" VerticalOptions="Center">

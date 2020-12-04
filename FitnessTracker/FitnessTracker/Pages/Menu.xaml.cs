@@ -19,7 +19,7 @@ namespace FitnessTracker.Pages
         {
             InitializeComponent();
             //BindingContext = new MainVm();
-            Models.BodyWeightHandler.localPath = Path.Combine(FileSystem.AppDataDirectory, BodyWeightHandler.FILENAME);
+            //Models.BodyWeightHandler.localPath = Path.Combine(FileSystem.AppDataDirectory, BodyWeightHandler.FILENAME);
         }
 
         private static Menu _instance;

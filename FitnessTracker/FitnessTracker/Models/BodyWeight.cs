@@ -12,9 +12,6 @@ namespace FitnessTracker.Models
         public DateTime DateTime { get; set; }
         public decimal Weight { get; set; }
         public decimal BodyFat { get; set; }
-
-
-
     }
     class BodyWeightHandler
     {
@@ -37,7 +34,7 @@ namespace FitnessTracker.Models
         }
         public const string FILENAME = "FileBodyWeight.txt";
 
-        public static string localPath;
+        public static string localPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "/FitnessTracker/FileBodyWeight.txt";
         public void AddBodyWeight(BodyWeight bodyWeight)
         {
             bodyWeightList.Add(bodyWeight);
@@ -50,7 +47,10 @@ namespace FitnessTracker.Models
 
         public void Save()
         {
-            //string json = JsonSerializer.Serialize(chatMessage);
+            if (!File.Exists(localPath))
+            {
+                Directory.CreateDirectory(localPath);
+            }
             XmlSerializer ser = new XmlSerializer(bodyWeightList.GetType());
             using (FileStream stream = File.Create(localPath))
             {
@@ -61,7 +61,7 @@ namespace FitnessTracker.Models
         {
             try
             {
-                if (File.Exists(FILENAME))
+                if (File.Exists(localPath)) // File.Exists(FILENAME)
                 {
                     XmlSerializer ser = new XmlSerializer(bodyWeightList.GetType());
                     using (FileStream stream = File.Open(localPath, FileMode.Open))

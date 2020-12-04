@@ -18,17 +18,39 @@ namespace FitnessTracker.ViewModels
 
         public ObservableCollection<BodyWeight> BodyWeightList { get; set; }
 
-        string todayDate = string.Empty;
-        public string TodayDate
+        private DateTime date = DateTime.Now.Date;
+        public DateTime Date
         {
-            get => todayDate = DateTime.Now.ToString("dd/MM/yyyy");
-            private set
+            get { return date.Date; }
+            set
             {
-                todayDate = value;
+                date = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Date"));
             }
         }
-        private string _weight;
-        public string Weight
+        private DateTime templateTodayDate;
+        public DateTime TemplateTodayDate
+        {
+            get { return templateTodayDate; }
+            set
+            {
+                date = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("TemplateTodayDate"));
+            }
+        }
+
+        private DateTime todayDate;
+        public DateTime TodayDate
+        {
+            get { return todayDate = DateTime.Now; }
+            set
+            {
+                date = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Date"));
+            }
+        }
+        private decimal _weight;
+        public decimal Weight
         {
             get { return _weight; }
             set
@@ -37,8 +59,8 @@ namespace FitnessTracker.ViewModels
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Weight"));
             }
         }
-        private string _bodyFat;
-        public string BodyFat
+        private decimal _bodyFat;
+        public decimal BodyFat
         {
             get { return _bodyFat; }
             set
@@ -63,21 +85,23 @@ namespace FitnessTracker.ViewModels
 
             SaveCommand = new RelayCommand((o) =>
             {
-                BodyWeight bodyWeight = new BodyWeight()
+                if (Weight > 0)
                 {
-                    DateTime = DateTime.Now,
-                    // DateTime = Convert.ToDateTime(TodayDate),
-                    Weight = decimal.Parse(Weight),
-                    BodyFat = decimal.Parse(BodyFat)
+                    BodyWeight bodyWeight = new BodyWeight()
+                    {
+                        DateTime = Date,
+                        Weight = Weight,
+                        BodyFat = BodyFat
 
-                };
-                BodyWeightHandler.Instance.AddBodyWeight(bodyWeight);
-                BodyWeightList.Add(bodyWeight);
-                BodyWeightHandler.Instance.Save();
+                    };
+                    BodyWeightHandler.Instance.AddBodyWeight(bodyWeight);
+                    BodyWeightList.Add(bodyWeight);
+                    BodyWeightHandler.Instance.Save();
+                }
             });
 
             BackCommand = new RelayCommand(Back);
-            
+
 
             FileExistCommand = new RelayCommand((o) =>
             {
