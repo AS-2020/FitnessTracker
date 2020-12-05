@@ -25,31 +25,11 @@ namespace FitnessTracker.ViewModels
             get { return date.Date; }
             set
             {
-                date = value;
+                date = value.Date;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Date"));
             }
         }
-        private DateTime templateTodayDate;
-        public DateTime TemplateTodayDate
-        {
-            get { return templateTodayDate; }
-            set
-            {
-                date = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("TemplateTodayDate"));
-            }
-        }
-
-        private DateTime todayDate;
-        public DateTime TodayDate
-        {
-            get { return todayDate = DateTime.Now; }
-            set
-            {
-                date = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Date"));
-            }
-        }
+        
         private decimal _weight;
         public decimal Weight
         {

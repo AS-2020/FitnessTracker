@@ -9,15 +9,27 @@
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="5*"/>
+                <RowDefinition Height="7*"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <Entry Grid.Row="0" Text="Bodyweight" />
+            <Label Grid.Row="0" Text="Bodyweight" HorizontalOptions="Center" HorizontalTextAlignment="Center" Padding="10" FontAttributes="Bold" VerticalTextAlignment="Center" FontSize="16"/>
             <ListView Grid.Row="1" ItemsSource="{Binding BodyWeightList}">
+                <ListView.Header>
+                    <Grid BackgroundColor="LightBlue">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Column="0" Text="Date"/>
+                        <Label Grid.Column="1" Text="Weight"/>
+                        <Label Grid.Column="2" Text="Bodyfat"/>
+                    </Grid>
+                </ListView.Header>
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell>
-                            <Grid>
+                            <Grid HorizontalOptions="Center" VerticalOptions="Center">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition />
                                     <ColumnDefinition />
@@ -31,7 +43,9 @@
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
-            <Button Grid.Row="2" Text="Back" Command="{Binding BackCommand}"/>
+            <StackLayout Grid.Row="2" HorizontalOptions="Center" Orientation="Horizontal">
+                <Button Text="Back" Command="{Binding BackCommand}"/>
+            </StackLayout>
         </Grid>
     </ContentPage.Content>
 </ContentPage>

@@ -10,7 +10,14 @@ namespace FitnessTracker.Models
 {
     public class BodyWeight
     {
-        public DateTime DateTime { get; set; }
+        private DateTime _dateTime;
+
+        public DateTime DateTime
+        {
+            get { return _dateTime.Date; }
+            set { _dateTime = value.Date; }
+        }
+
         public decimal Weight { get; set; }
         public decimal BodyFat { get; set; }
     }
