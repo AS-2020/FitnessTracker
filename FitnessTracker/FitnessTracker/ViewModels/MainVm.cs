@@ -71,6 +71,16 @@ namespace FitnessTracker.ViewModels
             }
         }
 
+        private string _bodyWeightError;
+        public string BodyWeightError
+        {
+            get { return _bodyWeightError; }
+            set
+            {
+                _bodyWeightError = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("BodyWeightError"));
+            }
+        }
         public RelayCommand SaveCommand { get; set; }
         public RelayCommand BackCommand { get; set; }
         public RelayCommand FileExistCommand { get; set; }
@@ -79,14 +89,23 @@ namespace FitnessTracker.ViewModels
         {
             Xamarin.Forms.Application.Current.MainPage.Navigation.PopAsync();
         }
-        public  MainVm()
+
+        public MainVm()
         {
             BodyWeightHandler.Instance.Load();
             BodyWeightList = new ObservableCollection<BodyWeight>(BodyWeightHandler.Instance.GetBodyWeight());
 
             SaveCommand = new RelayCommand((o) =>
             {
-                if (Weight > 0)
+                if (BodyWeightHandler.Instance.GetBodyWeight().Find(e => e.DateTime == Date) != null)
+                {
+                    BodyWeightError = "There alredy exists an entry for this day";
+                }
+                else if (Weight <= 0)
+                {
+                    BodyWeightError = "Enter your bodyweight";
+                }
+                else
                 {
                     BodyWeight bodyWeight = new BodyWeight()
                     {
@@ -98,6 +117,8 @@ namespace FitnessTracker.ViewModels
                     BodyWeightHandler.Instance.AddBodyWeight(bodyWeight);
                     BodyWeightList.Add(bodyWeight);
                     BodyWeightHandler.Instance.Save();
+                    BodyWeightError = "";
+                    Back(o);
                 }
             });
 

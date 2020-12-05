@@ -6,13 +6,30 @@
     <ContentPage.BindingContext>
         <vm:MainVm />
     </ContentPage.BindingContext>
-        <ContentPage.Content>
-        <StackLayout HorizontalOptions="Center" VerticalOptions="Center">
-            <Entry Text="{Binding TodayDate}" WidthRequest="130" />
-            <Entry Placeholder="Weight" Text="{Binding Weight}"/>
-            <Entry Placeholder="Bodyfat" Text="{Binding BodyFat}"/>
-            <Button Text="Save" Command="{Binding SaveCommand}"/>
-            <Button Text="Back" Command="{Binding BackCommand}"/>
-        </StackLayout>
+    <ContentPage.Content>
+        <Grid Padding="20,20,0,20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Label Grid.Row="0" Grid.Column="0"  Text="Date" VerticalOptions="Center" HorizontalOptions="Center"/>
+            <Label Grid.Row="1" Grid.Column="0"  Text="Weight" VerticalOptions="Center" HorizontalOptions="Center"/>
+            <Label Grid.Row="2" Grid.Column="0"  Text="Bodyfat" VerticalOptions="Center" HorizontalOptions="Center"/>
+            <Entry Grid.Row="0" Grid.Column="1" Text="{Binding TodayDate}" WidthRequest="100"/>
+            <Entry Grid.Row="1" Grid.Column="1" Placeholder="Weight" Text="{Binding Weight}" WidthRequest="100" VerticalOptions="Center" HorizontalOptions="Center"/>
+            <Entry Grid.Row="2" Grid.Column="1" Placeholder="Bodyfat" Text="{Binding BodyFat}" WidthRequest="100" VerticalOptions="Center" HorizontalOptions="Center"/>
+            <StackLayout Grid.Row="3" Grid.ColumnSpan="2" VerticalOptions="Center" HorizontalOptions="Center">
+            <Button Text="Save" Command="{Binding SaveCommand}" WidthRequest="100"/>
+            <Button Text="Back" Command="{Binding BackCommand}" WidthRequest="100"/>
+            </StackLayout>
+            <Label Grid.Row="4" Grid.ColumnSpan="2" Text="{Binding BodyWeightError}" VerticalOptions="Center" HorizontalOptions="Center"/>
+        </Grid>
     </ContentPage.Content>
 </ContentPage>

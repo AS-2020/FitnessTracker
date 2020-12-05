@@ -43,7 +43,7 @@ namespace FitnessTracker.Models
             bodyWeightList.Add(bodyWeight);
         }
 
-        public IEnumerable<BodyWeight> GetBodyWeight()
+        public List<BodyWeight> GetBodyWeight()
         {
             return bodyWeightList;
         }
