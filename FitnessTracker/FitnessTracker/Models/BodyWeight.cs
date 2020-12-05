@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FitnessTracker.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -34,7 +35,9 @@ namespace FitnessTracker.Models
         }
         public const string FILENAME = "FileBodyWeight.txt";
 
-        public static string localPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "/FitnessTracker/FileBodyWeight.txt";
+        //var documentsPath = System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+
+        public static string localPath = System.IO.Path.Combine (System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + FILENAME);
         public void AddBodyWeight(BodyWeight bodyWeight)
         {
             bodyWeightList.Add(bodyWeight);
@@ -45,20 +48,21 @@ namespace FitnessTracker.Models
             return bodyWeightList;
         }
 
-        public void Save()
+        public async void Save()
         {
-            if (!File.Exists(localPath))
-            {
-                Directory.CreateDirectory(localPath);
-            }
+            await MainVm.CheckAndRequestStorageWritePermission();
+
+            
             XmlSerializer ser = new XmlSerializer(bodyWeightList.GetType());
             using (FileStream stream = File.Create(localPath))
             {
                 ser.Serialize(stream, bodyWeightList);
             }
         }
-        public void Load()
+        public async void Load()
         {
+            await MainVm.CheckAndRequestStorageReadPermission();
+
             try
             {
                 if (File.Exists(localPath)) // File.Exists(FILENAME)

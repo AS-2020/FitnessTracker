@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -78,7 +79,7 @@ namespace FitnessTracker.ViewModels
         {
             Xamarin.Forms.Application.Current.MainPage.Navigation.PopAsync();
         }
-        public MainVm()
+        public  MainVm()
         {
             BodyWeightHandler.Instance.Load();
             BodyWeightList = new ObservableCollection<BodyWeight>(BodyWeightHandler.Instance.GetBodyWeight());
@@ -117,7 +118,29 @@ namespace FitnessTracker.ViewModels
 
         }
 
+        public static async Task<PermissionStatus> CheckAndRequestStorageWritePermission()
+        {
+            var status = await Permissions.CheckStatusAsync<Permissions.StorageWrite>();
 
+            if (status == PermissionStatus.Granted)
+                return status;
+
+            status = await Permissions.RequestAsync<Permissions.StorageWrite>();
+
+            return status;
+        }
+
+        public static async Task<PermissionStatus> CheckAndRequestStorageReadPermission()
+        {
+            var status = await Permissions.CheckStatusAsync<Permissions.StorageRead>();
+
+            if (status == PermissionStatus.Granted)
+                return status;
+
+            status = await Permissions.RequestAsync<Permissions.StorageRead>();
+
+            return status;
+        }
         //void OnPropertyChanged(string name)
         //{
         //    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
