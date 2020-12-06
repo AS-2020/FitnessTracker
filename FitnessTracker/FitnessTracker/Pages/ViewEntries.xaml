@@ -8,6 +8,7 @@
     <ContentPage.Content>
         <StackLayout HorizontalOptions="Center" VerticalOptions="Center">
             <Button Text="View Bodyweight" Clicked="ViewBodyWeight_Clicked"/>
+            <Button Text="View Jogging" Clicked="ViewJogging_Clicked"/>
             <Button Text="Back" Command="{Binding BackCommand}"/>
         </StackLayout>
     </ContentPage.Content>

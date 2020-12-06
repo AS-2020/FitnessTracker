@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:vm="clr-namespace:FitnessTracker.ViewModels"
-             x:Class="FitnessTracker.Pages.ViewBodyWeight">
+             x:Class="FitnessTracker.Pages.ViewJogging">
     <ContentPage.BindingContext>
         <vm:MainVm/>
     </ContentPage.BindingContext>
@@ -12,18 +12,16 @@
                 <RowDefinition Height="7*"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <Label Grid.Row="0" Text="Bodyweight" HorizontalOptions="Center" HorizontalTextAlignment="Center" Padding="10" FontAttributes="Bold" VerticalTextAlignment="Center" FontSize="16"/>
-            <ListView Grid.Row="1" ItemsSource="{Binding BodyWeightList}">
+            <Label Grid.Row="0" Text="Jogging" HorizontalOptions="Center" HorizontalTextAlignment="Center" Padding="10" FontAttributes="Bold" VerticalTextAlignment="Center" FontSize="16"/>
+            <ListView Grid.Row="1" ItemsSource="{Binding JoggingList}">
                 <ListView.Header>
                     <Grid BackgroundColor="LightBlue">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition />
                             <ColumnDefinition />
-                            <ColumnDefinition />
                         </Grid.ColumnDefinitions>
                         <Label Grid.Column="0" Text="Date"/>
-                        <Label Grid.Column="1" Text="Weight"/>
-                        <Label Grid.Column="2" Text="Bodyfat"/>
+                        <Label Grid.Column="1" Text="Time"/>
                     </Grid>
                 </ListView.Header>
                 <ListView.ItemTemplate>
@@ -33,11 +31,9 @@
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition />
                                     <ColumnDefinition />
-                                    <ColumnDefinition />
                                 </Grid.ColumnDefinitions>
                                 <Label Grid.Column="0" Text="{Binding DateTime}"/>
-                                <Label Grid.Column="1" Text="{Binding Weight}"/>
-                                <Label Grid.Column="2" Text="{Binding BodyFat}"/>
+                                <Label Grid.Column="1" Text="{Binding JoggingTime}"/>
                             </Grid>
                         </ViewCell>
                     </DataTemplate>

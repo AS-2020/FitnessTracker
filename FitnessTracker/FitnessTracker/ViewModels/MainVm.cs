@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,7 +19,30 @@ namespace FitnessTracker.ViewModels
         public event PropertyChangedEventHandler PropertyChanged;
 
         public ObservableCollection<BodyWeight> BodyWeightList { get; set; }
+        public ObservableCollection<Jogging> JoggingList { get; set; }
 
+        private Stopwatch stopwatch = new Stopwatch();
+        private string _startOrPause = "Start";
+        public string StartOrPause
+        {
+            get { return _startOrPause; }
+            set
+            {
+                _startOrPause = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("StartOrPause"));
+            }
+        }
+
+        private TimeSpan _timejogging;
+        public TimeSpan Timejogging
+        {
+            get { return _timejogging; }
+            set
+            {
+                _timejogging = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Timejogging"));
+            }
+        }
         private DateTime date = DateTime.Now.Date;
         public DateTime Date
         {
@@ -26,10 +50,10 @@ namespace FitnessTracker.ViewModels
             set
             {
                 date = value.Date;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Date"));
+                //PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Date"));
             }
         }
-        
+
         private decimal _weight;
         public decimal Weight
         {
@@ -37,7 +61,7 @@ namespace FitnessTracker.ViewModels
             set
             {
                 _weight = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Weight"));
+                //PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Weight"));
             }
         }
         private decimal _bodyFat;
@@ -47,7 +71,7 @@ namespace FitnessTracker.ViewModels
             set
             {
                 _bodyFat = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("BodyFat"));
+                //PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("BodyFat"));
             }
         }
 
@@ -61,9 +85,21 @@ namespace FitnessTracker.ViewModels
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("BodyWeightError"));
             }
         }
+        private string _joggingError;
+        public string JoggingError
+        {
+            get { return _joggingError; }
+            set
+            {
+                _joggingError = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("JoggingError"));
+            }
+        }
         public RelayCommand SaveCommand { get; set; }
         public RelayCommand BackCommand { get; set; }
-        public RelayCommand FileExistCommand { get; set; }
+        public RelayCommand StartWatchCommand { get; set; }
+        public RelayCommand ResetWatchCommand { get; set; }
+        public RelayCommand SaveJoggingCommand { get; set; }
 
         public void Back(object o)
         {
@@ -74,6 +110,8 @@ namespace FitnessTracker.ViewModels
         {
             BodyWeightHandler.Instance.Load();
             BodyWeightList = new ObservableCollection<BodyWeight>(BodyWeightHandler.Instance.GetBodyWeight());
+            JoggingHandler.Instance.Load();
+            JoggingList = new ObservableCollection<Jogging>(JoggingHandler.Instance.GetJogging());
 
             SaveCommand = new RelayCommand((o) =>
             {
@@ -102,18 +140,73 @@ namespace FitnessTracker.ViewModels
                 }
             });
 
-            BackCommand = new RelayCommand(Back);
-
-
-            FileExistCommand = new RelayCommand((o) =>
+            SaveJoggingCommand = new RelayCommand((o) =>
             {
-                if (File.Exists(BodyWeightHandler.FILENAME))
+                if (Timejogging == TimeSpan.Zero)
                 {
-                    Console.WriteLine("File exists");
+                    JoggingError = "No Time available";
                 }
                 else
                 {
-                    Console.WriteLine("File does not exist");
+                    Jogging jogging = new Jogging()
+                    {
+                        DateTime = Date,
+                        JoggingTime = Timejogging,
+
+                    };
+                    JoggingHandler.Instance.AddJogging(jogging);
+                    JoggingList.Add(jogging);
+                    JoggingHandler.Instance.Save();
+                    JoggingError = "";
+                    Back(o);
+                }
+            });
+
+            BackCommand = new RelayCommand(Back);
+            ResetWatchCommand = new RelayCommand(ResetStopWatch);
+
+
+            StartWatchCommand = new RelayCommand((o) =>
+            {
+                if (StartOrPause == "Start")
+                {
+                    StartStopWatch(o);
+                    Device.StartTimer(TimeSpan.FromMilliseconds(100), () =>
+                    {
+                        Timejogging = stopwatch.Elapsed;
+                        if (!stopwatch.IsRunning)
+                        {
+                            return false;
+                        }
+                        else
+                        {
+                            return true;
+                        }
+                    });
+                    StartOrPause = "Pause";
+                }
+                else if (StartOrPause == "Pause")
+                {
+                    PauseStopWatch(o);
+                    StartOrPause = "Resume";
+                }
+                else if (StartOrPause == "Resume")
+                {
+                    StartStopWatch(o);
+                    Device.StartTimer(TimeSpan.FromMilliseconds(100), () =>
+                    {
+                        Timejogging = stopwatch.Elapsed;
+
+                        if (!stopwatch.IsRunning)
+                        {
+                            return false;
+                        }
+                        else
+                        {
+                            return true;
+                        }
+                    });
+                    StartOrPause = "Pause";
                 }
             });
 
@@ -146,6 +239,20 @@ namespace FitnessTracker.ViewModels
         //{
         //    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         //}
+        public void StartStopWatch(object o)
+        {
+            stopwatch.Start();
+        }
+        public void PauseStopWatch(object o)
+        {
+            stopwatch.Stop();
+        }
+        public void ResetStopWatch(object o)
+        {
+            stopwatch.Reset();
+            Timejogging = TimeSpan.Zero;
+            StartOrPause = "Start";
+        }
     }
 }
 

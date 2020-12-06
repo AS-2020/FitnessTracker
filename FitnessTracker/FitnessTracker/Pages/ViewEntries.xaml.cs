@@ -26,5 +26,10 @@ namespace FitnessTracker.Pages
         {
             Navigation.PushAsync(new ViewBodyWeight());
         }
+
+        private void ViewJogging_Clicked(object sender, EventArgs e)
+        {
+            Navigation.PushAsync(new ViewJogging());
+        }
     }
 }

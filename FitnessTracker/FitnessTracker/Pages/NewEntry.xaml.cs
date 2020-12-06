@@ -27,5 +27,10 @@ namespace FitnessTracker.Pages
         {
             Navigation.PopAsync();
         }
+
+        private void NewEntryJogging_Clicked(object sender, EventArgs e)
+        {
+            Navigation.PushAsync(new NewEntryJogging());
+        }
     }
 }

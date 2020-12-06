@@ -1,10 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="FitnessTracker.Pages.NewEntryBodyWeight"
-             xmlns:vm="clr-namespace:FitnessTracker.ViewModels">
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:vm="clr-namespace:FitnessTracker.ViewModels"
+             x:Class="FitnessTracker.Pages.NewEntryJogging">
     <ContentPage.BindingContext>
-        <vm:MainVm />
+        <vm:MainVm StartOrPause="Start"/>
     </ContentPage.BindingContext>
     <ContentPage.Content>
         <Grid Padding="20,10,10,20" VerticalOptions="Center" HorizontalOptions="Center" >
@@ -21,8 +20,8 @@
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <Label Grid.Column="0" Text="Date" VerticalOptions="Center" HorizontalOptions="Center"/>
-                    <Entry Grid.Column="1" Text="{Binding Date}" VerticalOptions="Center" HorizontalOptions="Center" />
+                    <Label Grid.Column="0" Text="" VerticalOptions="Center" HorizontalOptions="Center"/>
+                    <Entry Grid.Column="1" Text="{Binding Timejogging}" IsReadOnly="True" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" />
                 </Grid>
             </StackLayout>
             <StackLayout Grid.Row="1" >
@@ -31,25 +30,15 @@
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <Label Grid.Column="0" Text="Weight" VerticalOptions="Center" HorizontalOptions="Center"/>
-                    <Entry Grid.Column="1" Placeholder="Weight" Text="{Binding Weight}" VerticalOptions="Center" HorizontalOptions="Center"/>
-                </Grid>
-            </StackLayout>
-            <StackLayout Grid.Row="2" >
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <Label Grid.Column="0" Text="Bodyfat" VerticalOptions="Center" HorizontalOptions="Center"/>
-                    <Entry Grid.Column="1" Placeholder="Bodyfat" Text="{Binding BodyFat}" VerticalOptions="Center" HorizontalOptions="Center"/>
+                    <Button Grid.Column="0" Text="{Binding StartOrPause}" Command="{Binding StartWatchCommand}" VerticalOptions="Center" HorizontalOptions="Center"/>
+                    <Button Grid.Column="1" Text="Reset" VerticalOptions="Center" Command="{Binding ResetWatchCommand}" HorizontalOptions="Center"/>
                 </Grid>
             </StackLayout>
             <StackLayout Grid.Row="4" Grid.ColumnSpan="2" HorizontalOptions="Center" Orientation="Horizontal">
-                <Button Text="Save" Command="{Binding SaveCommand}"/>
+                <Button Text="Save" Command="{Binding SaveJoggingCommand}"/>
                 <Button Text="Back" Command="{Binding BackCommand}"/>
             </StackLayout>
-            <Label Grid.Row="3" Text="{Binding BodyWeightError}" VerticalOptions="Center" HorizontalOptions="Center"/>
+            <Label Grid.Row="3" Text="{Binding JoggingError}" VerticalOptions="Center" HorizontalOptions="Center"/>
         </Grid>
     </ContentPage.Content>
 </ContentPage>

@@ -20,6 +20,11 @@ namespace FitnessTracker.Models
 
         public decimal Weight { get; set; }
         public decimal BodyFat { get; set; }
+
+        public override string ToString()
+        {
+            return $"{DateTime.ToString("dd/MM/yyyy")} {Weight} {BodyFat}";
+        }
     }
     class BodyWeightHandler
     {
