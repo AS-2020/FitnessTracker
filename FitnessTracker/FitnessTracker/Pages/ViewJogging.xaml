@@ -27,13 +27,13 @@
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell>
-                            <Grid HorizontalOptions="Center" VerticalOptions="Center">
+                            <Grid >
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition />
                                     <ColumnDefinition />
                                 </Grid.ColumnDefinitions>
-                                <Label Grid.Column="0" Text="{Binding DateTime}"/>
-                                <Label Grid.Column="1" Text="{Binding JoggingTime}"/>
+                                <Label Grid.Column="0" Text="{Binding ShowDate}" HorizontalOptions="Center" VerticalOptions="Center"/>
+                                <Label Grid.Column="1" Text="{Binding JoggingTime}" HorizontalOptions="Center" VerticalOptions="Center"/>
                             </Grid>
                         </ViewCell>
                     </DataTemplate>

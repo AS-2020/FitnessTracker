@@ -6,7 +6,7 @@
         <vm:MainVm StartOrPause="Start"/>
     </ContentPage.BindingContext>
     <ContentPage.Content>
-        <Grid Padding="20,10,10,20" VerticalOptions="Center" HorizontalOptions="Center" >
+        <Grid Padding="20,10,10,20" VerticalOptions="Center" HorizontalOptions="Center">
             <Grid.RowDefinitions>
                 <RowDefinition Height="2*"/>
                 <RowDefinition Height="2*"/>
@@ -20,21 +20,25 @@
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <Label Grid.Column="0" Text="" VerticalOptions="Center" HorizontalOptions="Center"/>
-                    <Entry Grid.Column="1" Text="{Binding Timejogging}" IsReadOnly="True" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" />
+                    <Label Grid.Column="0" Text="Date" VerticalOptions="Center" HorizontalOptions="Center"/>
+                    <Entry Grid.Column="1" Text="{Binding Date}" VerticalOptions="Center" HorizontalOptions="Center" />
                 </Grid>
             </StackLayout>
-            <StackLayout Grid.Row="1" >
-                <Grid>
+            <StackLayout Grid.Row="1">
+                <Grid >
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <Button Grid.Column="0" Text="{Binding StartOrPause}" Command="{Binding StartWatchCommand}" VerticalOptions="Center" HorizontalOptions="Center"/>
-                    <Button Grid.Column="1" Text="Reset" VerticalOptions="Center" Command="{Binding ResetWatchCommand}" HorizontalOptions="Center"/>
+                    <Label Grid.Column="0" Text="" VerticalOptions="Center" HorizontalOptions="Center"/>
+                    <Entry Grid.ColumnSpan="2" Text="{Binding Timejogging}" IsReadOnly="True" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" />
                 </Grid>
             </StackLayout>
-            <StackLayout Grid.Row="4" Grid.ColumnSpan="2" HorizontalOptions="Center" Orientation="Horizontal">
+            <StackLayout Grid.Row="2" HorizontalOptions="Center" Orientation="Horizontal">
+                    <Button Grid.Column="0" Text="{Binding StartOrPause}" Command="{Binding StartWatchCommand}" VerticalOptions="Center" HorizontalOptions="Center"/>
+                    <Button Grid.Column="1" Text="Reset" VerticalOptions="Center" Command="{Binding ResetWatchCommand}" HorizontalOptions="Center"/>
+            </StackLayout>
+            <StackLayout Grid.Row="4" HorizontalOptions="Center" Orientation="Horizontal">
                 <Button Text="Save" Command="{Binding SaveJoggingCommand}"/>
                 <Button Text="Back" Command="{Binding BackCommand}"/>
             </StackLayout>

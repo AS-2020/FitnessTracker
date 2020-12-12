@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Essentials;
@@ -32,8 +33,20 @@ namespace FitnessTracker.ViewModels
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("StartOrPause"));
             }
         }
+        private const string THEPW = "123";
 
-        private TimeSpan _timejogging;
+        private string _password = "";
+        public string Password
+        {
+            get { return _password; }
+            set
+            {
+                _password = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Password"));
+            }
+        }
+
+        private TimeSpan _timejogging = TimeSpan.FromSeconds(0);
         public TimeSpan Timejogging
         {
             get { return _timejogging; }
@@ -43,13 +56,13 @@ namespace FitnessTracker.ViewModels
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Timejogging"));
             }
         }
-        private DateTime date = DateTime.Now.Date;
-        public DateTime Date
+        private string date = DateTime.Now.ToShortDateString();
+        public string Date
         {
-            get { return date.Date; }
+            get { return date; }
             set
             {
-                date = value.Date;
+                date = value;
                 //PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Date"));
             }
         }
@@ -100,11 +113,14 @@ namespace FitnessTracker.ViewModels
         public RelayCommand StartWatchCommand { get; set; }
         public RelayCommand ResetWatchCommand { get; set; }
         public RelayCommand SaveJoggingCommand { get; set; }
+        public RelayCommand DeleteJoggingCommand { get; set; }
+        public RelayCommand DeleteBodyWeightCommand { get; set; }
 
         public void Back(object o)
         {
             Xamarin.Forms.Application.Current.MainPage.Navigation.PopAsync();
         }
+
 
         public MainVm()
         {
@@ -115,7 +131,7 @@ namespace FitnessTracker.ViewModels
 
             SaveCommand = new RelayCommand((o) =>
             {
-                if (BodyWeightHandler.Instance.GetBodyWeight().Find(e => e.DateTime == Date) != null)
+                if (BodyWeightHandler.Instance.GetBodyWeight().Find(e => e.ShowDate == Date) != null)
                 {
                     BodyWeightError = "There alredy exists an entry for this day";
                 }
@@ -127,13 +143,13 @@ namespace FitnessTracker.ViewModels
                 {
                     BodyWeight bodyWeight = new BodyWeight()
                     {
-                        DateTime = Date,
+                        Date_asDate = DateTime.Parse(Date),
                         Weight = Weight,
                         BodyFat = BodyFat
 
                     };
                     BodyWeightHandler.Instance.AddBodyWeight(bodyWeight);
-                    BodyWeightList.Add(bodyWeight);
+                    BodyWeightList = new ObservableCollection<BodyWeight>(BodyWeightHandler.Instance.GetBodyWeight());
                     BodyWeightHandler.Instance.Save();
                     BodyWeightError = "";
                     Back(o);
@@ -150,14 +166,33 @@ namespace FitnessTracker.ViewModels
                 {
                     Jogging jogging = new Jogging()
                     {
-                        DateTime = Date,
-                        JoggingTime = Timejogging,
-
+                        Date_asDate = DateTime.Parse(Date),
+                        JoggingTime = Timejogging.ToString()
                     };
                     JoggingHandler.Instance.AddJogging(jogging);
-                    JoggingList.Add(jogging);
+                    JoggingList = new ObservableCollection<Jogging>(JoggingHandler.Instance.GetJogging());
                     JoggingHandler.Instance.Save();
                     JoggingError = "";
+                    Back(o);
+                }
+            });
+
+            DeleteJoggingCommand = new RelayCommand((o) =>
+            {
+                if (Password == THEPW)
+                {
+                    JoggingHandler.Instance.Delete();
+                    JoggingList = new ObservableCollection<Jogging>(JoggingHandler.Instance.GetJogging());
+                    Back(o);
+                }
+            });
+
+            DeleteBodyWeightCommand = new RelayCommand((o) =>
+            {
+                if (Password == THEPW)
+                {
+                    BodyWeightHandler.Instance.Delete();
+                    BodyWeightList = new ObservableCollection<BodyWeight>(BodyWeightHandler.Instance.GetBodyWeight());
                     Back(o);
                 }
             });
@@ -171,7 +206,7 @@ namespace FitnessTracker.ViewModels
                 if (StartOrPause == "Start")
                 {
                     StartStopWatch(o);
-                    Device.StartTimer(TimeSpan.FromMilliseconds(100), () =>
+                    Device.StartTimer(TimeSpan.FromSeconds(0), () =>
                     {
                         Timejogging = stopwatch.Elapsed;
                         if (!stopwatch.IsRunning)
@@ -193,7 +228,7 @@ namespace FitnessTracker.ViewModels
                 else if (StartOrPause == "Resume")
                 {
                     StartStopWatch(o);
-                    Device.StartTimer(TimeSpan.FromMilliseconds(100), () =>
+                    Device.StartTimer(TimeSpan.FromSeconds(0), () =>
                     {
                         Timejogging = stopwatch.Elapsed;
 

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
 using Xamarin.Essentials;
@@ -10,21 +11,24 @@ namespace FitnessTracker.Models
 {
     public class BodyWeight
     {
-        private DateTime _dateTime;
+        private DateTime _date_asDate;
 
-        public DateTime DateTime
+        public DateTime Date_asDate
         {
-            get { return _dateTime.Date; }
-            set { _dateTime = value.Date; }
+            get { return _date_asDate; }
+            set { _date_asDate = value; }
+        }
+
+        private string _showDate;
+        public string ShowDate
+        {
+            get { return Date_asDate.ToShortDateString(); }
         }
 
         public decimal Weight { get; set; }
         public decimal BodyFat { get; set; }
 
-        public override string ToString()
-        {
-            return $"{DateTime.ToString("dd/MM/yyyy")} {Weight} {BodyFat}";
-        }
+
     }
     class BodyWeightHandler
     {
@@ -53,11 +57,12 @@ namespace FitnessTracker.Models
         public void AddBodyWeight(BodyWeight bodyWeight)
         {
             bodyWeightList.Add(bodyWeight);
+            bodyWeightList = bodyWeightList.OrderBy(d => d.Date_asDate).ToList();
         }
 
         public List<BodyWeight> GetBodyWeight()
         {
-            return bodyWeightList;
+            return bodyWeightList.OrderBy(d => d.Date_asDate).ToList();
         }
 
         public async void Save()
@@ -92,6 +97,19 @@ namespace FitnessTracker.Models
                 // Event auslösen ...
             }
 
+        }
+
+        public async void Delete()
+        {
+            await MainVm.CheckAndRequestStorageWritePermission();
+
+            bodyWeightList.Clear();
+
+            XmlSerializer ser = new XmlSerializer(bodyWeightList.GetType());
+            using (FileStream stream = File.Create(localPath))
+            {
+                ser.Serialize(stream, bodyWeightList);
+            }
         }
 
     }

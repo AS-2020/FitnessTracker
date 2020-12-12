@@ -50,5 +50,11 @@ namespace FitnessTracker.Pages
         {
             Navigation.PushAsync(new ViewEntries());
         }
+
+
+        private void DeleteEntries_Clicked(object sender, EventArgs e)
+        {
+            Navigation.PushAsync(new DeleteEntries());
+        }
     }
 }

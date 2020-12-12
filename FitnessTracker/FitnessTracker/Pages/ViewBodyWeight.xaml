@@ -29,15 +29,15 @@
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell>
-                            <Grid HorizontalOptions="Center" VerticalOptions="Center">
+                            <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition />
                                     <ColumnDefinition />
                                     <ColumnDefinition />
                                 </Grid.ColumnDefinitions>
-                                <Label Grid.Column="0" Text="{Binding DateTime}"/>
-                                <Label Grid.Column="1" Text="{Binding Weight}"/>
-                                <Label Grid.Column="2" Text="{Binding BodyFat}"/>
+                                <Label Grid.Column="0" Text="{Binding ShowDate}" HorizontalOptions="Center" VerticalOptions="Center"/>
+                                <Label Grid.Column="1" Text="{Binding Weight}" HorizontalOptions="Center" VerticalOptions="Center"/>
+                                <Label Grid.Column="2" Text="{Binding BodyFat}" HorizontalOptions="Center" VerticalOptions="Center"/>
                             </Grid>
                         </ViewCell>
                     </DataTemplate>

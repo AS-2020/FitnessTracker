@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
 
@@ -10,21 +11,31 @@ namespace FitnessTracker.Models
 {
     public class Jogging
     {
-        private DateTime _dateTime;
+        private DateTime _date_asDate;
 
-        public DateTime DateTime
+        public DateTime Date_asDate
         {
-            get { return _dateTime.Date; }
-            set { _dateTime = value.Date; }
+            get { return _date_asDate; }
+            set { _date_asDate = value; }
         }
 
-        private TimeSpan _joggingTime;
+        private string _showDate;
 
-        public TimeSpan JoggingTime
+        public string ShowDate
+        {
+            get { return Date_asDate.ToShortDateString(); }
+        }
+
+
+        private string _joggingTime;
+
+        public string JoggingTime
         {
             get { return _joggingTime; }
             set { _joggingTime = value; }
         }
+
+
     }
     class JoggingHandler
     { 
@@ -86,10 +97,24 @@ namespace FitnessTracker.Models
         public void AddJogging(Jogging jogging)
         {
             joggingList.Add(jogging);
+            joggingList = joggingList.OrderBy(d => d.Date_asDate).ToList();
         }
         public List<Jogging> GetJogging()
         {
-            return joggingList;
+            return joggingList.OrderBy(d => d.Date_asDate).ToList();
+        }
+
+        public async void Delete()
+        {
+            await MainVm.CheckAndRequestStorageWritePermission();
+
+            joggingList.Clear();
+
+            XmlSerializer ser = new XmlSerializer(joggingList.GetType());
+            using (FileStream stream = File.Create(localPath))
+            {
+                ser.Serialize(stream, joggingList);
+            }
         }
     }
 }
