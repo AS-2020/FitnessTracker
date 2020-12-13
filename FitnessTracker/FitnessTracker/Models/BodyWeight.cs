@@ -25,8 +25,8 @@ namespace FitnessTracker.Models
             get { return Date_asDate.ToShortDateString(); }
         }
 
-        public decimal Weight { get; set; }
-        public decimal BodyFat { get; set; }
+        public float Weight { get; set; }
+        public float BodyFat { get; set; }
 
 
     }

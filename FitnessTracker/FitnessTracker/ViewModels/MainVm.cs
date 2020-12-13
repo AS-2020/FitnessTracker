@@ -1,5 +1,7 @@
 ﻿using FitnessTracker.Helper;
 using FitnessTracker.Models;
+using Microcharts;
+using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -46,6 +48,54 @@ namespace FitnessTracker.ViewModels
             }
         }
 
+        public List<ChartEntry> entriesBodyWeight = new List<ChartEntry>();
+
+        private Chart chartBodyWeight;
+
+        public Chart ChartBodyWeight
+        {
+            get { return chartBodyWeight; }
+            set
+            {
+                chartBodyWeight = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ChartBodyWeight"));
+            }
+        }
+
+        private string charDateBodyWeightMin;
+
+        public string CharDateBodyWeightMin
+        {
+            get { return charDateBodyWeightMin; }
+            set
+            {
+                charDateBodyWeightMin = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("CharDateBodyWeightMin"));
+            }
+        }
+
+        private string errorDateBodyWeightChartView;
+
+        public string ErrorDateBodyWeightChartView
+        {
+            get { return errorDateBodyWeightChartView; }
+            set
+            {
+                errorDateBodyWeightChartView = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ErrorDateBodyWeightChartView"));
+            }
+        }
+        private string charDateBodyWeightMax;
+        public string CharDateBodyWeightMax
+        {
+            get { return charDateBodyWeightMax; }
+            set
+            {
+                charDateBodyWeightMax = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("CharDateBodyWeightMax"));
+            }
+        }
+
         private TimeSpan _timejogging = TimeSpan.FromSeconds(0);
         public TimeSpan Timejogging
         {
@@ -67,8 +117,8 @@ namespace FitnessTracker.ViewModels
             }
         }
 
-        private decimal _weight;
-        public decimal Weight
+        private float _weight;
+        public float Weight
         {
             get { return _weight; }
             set
@@ -77,8 +127,8 @@ namespace FitnessTracker.ViewModels
                 //PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Weight"));
             }
         }
-        private decimal _bodyFat;
-        public decimal BodyFat
+        private float _bodyFat;
+        public float BodyFat
         {
             get { return _bodyFat; }
             set
@@ -115,6 +165,7 @@ namespace FitnessTracker.ViewModels
         public RelayCommand SaveJoggingCommand { get; set; }
         public RelayCommand DeleteJoggingCommand { get; set; }
         public RelayCommand DeleteBodyWeightCommand { get; set; }
+        public RelayCommand CreateBodyWeightChartCommand { get; set; }
 
         public void Back(object o)
         {
@@ -245,6 +296,37 @@ namespace FitnessTracker.ViewModels
                 }
             });
 
+            CreateBodyWeightChartCommand = new RelayCommand((o) =>
+            {
+                if (CharDateBodyWeightMin != null && CharDateBodyWeightMax != null)
+                {
+                    try
+                    {
+                        DateTime start = DateTime.Parse(CharDateBodyWeightMin);
+                        DateTime end = DateTime.Parse(CharDateBodyWeightMax);
+                        CreateChart(start, end);
+                        ErrorDateBodyWeightChartView = "";
+                    }
+                    catch (System.FormatException)
+                    {
+                        entriesBodyWeight.Clear();
+                        ErrorDateBodyWeightChartView = "Enter Date";
+                    }
+                }
+                else
+                {
+                    CreateChart();
+                    ErrorDateBodyWeightChartView = "";
+                }
+                ChartBodyWeight = new LineChart() 
+                {
+                    Entries = entriesBodyWeight,
+                    PointSize = 50,
+                    LabelTextSize = 50,
+                    LineSize = 40
+                };
+            });
+
         }
 
         public static async Task<PermissionStatus> CheckAndRequestStorageWritePermission()
@@ -287,6 +369,35 @@ namespace FitnessTracker.ViewModels
             stopwatch.Reset();
             Timejogging = TimeSpan.Zero;
             StartOrPause = "Start";
+        }
+        public void CreateChart(DateTime start, DateTime end)
+        {
+            entriesBodyWeight.Clear();
+            List<BodyWeight> ListFromToBodyWeight = BodyWeightHandler.Instance.GetBodyWeight().Where(d => d.Date_asDate >= start && d.Date_asDate <= end).ToList();
+            foreach (var item in ListFromToBodyWeight)
+            {
+                ChartEntry entry = new ChartEntry(item.Weight)
+                {
+                    Color = SKColor.Parse("#00CED1"),
+                    Label = item.ShowDate,
+                    ValueLabel = item.Weight.ToString() +" kg | " + item.BodyFat.ToString() + " %"
+                };
+                entriesBodyWeight.Add(entry);
+            }
+        }
+        public void CreateChart()
+        {
+            entriesBodyWeight.Clear();
+            foreach (var item in BodyWeightHandler.Instance.GetBodyWeight())
+            {
+                ChartEntry entry = new ChartEntry(item.Weight)
+                {
+                    Color = SKColor.Parse("#00CED1"),
+                    Label = item.ShowDate,
+                    ValueLabel = item.Weight.ToString() + " kg | " + item.BodyFat.ToString() + " %"
+                };
+                entriesBodyWeight.Add(entry);
+            }
         }
     }
 }

@@ -31,5 +31,10 @@ namespace FitnessTracker.Pages
         {
             Navigation.PushAsync(new ViewJogging());
         }
+
+        private void ViewBodyWeightChart_Clicked(object sender, EventArgs e)
+        {
+            Navigation.PushAsync(new ViewBodyWeightChart());
+        }
     }
 }
