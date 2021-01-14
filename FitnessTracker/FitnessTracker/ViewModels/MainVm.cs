@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Xamarin.Essentials;
 using Xamarin.Forms;
@@ -158,6 +159,49 @@ namespace FitnessTracker.ViewModels
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("JoggingError"));
             }
         }
+        private DateTime startTimer;
+
+        public DateTime StartTimer
+        {
+            get { return startTimer; }
+            set
+            {
+                startTimer = value;
+                OnPropertyChanged("StartTimer");
+            }
+        }
+        public TimeSpan TimeBeforePause { get; set; }
+        public Task Timer { get; set; }
+        //private static CancellationTokenSource ts = new CancellationTokenSource();
+
+        //public CancellationTokenSource Ts
+        //{
+        //    get
+        //    {
+        //        return ts;
+        //    }
+        //    set
+        //    {
+        //        ts = value;
+        //    }
+        //}
+        //public CancellationToken ct = ts.Token;
+        //public CancellationToken Ct
+        //{
+        //    get
+        //    {
+        //        return ct;
+        //    }
+        //    set
+        //    {
+        //        ct = value;
+        //    }
+        //}
+        public static CancellationTokenSource ts; // = new CancellationTokenSource();
+        public CancellationToken ct; //= ts.Token;
+
+
+
         public RelayCommand SaveCommand { get; set; }
         public RelayCommand BackCommand { get; set; }
         public RelayCommand StartWatchCommand { get; set; }
@@ -224,6 +268,7 @@ namespace FitnessTracker.ViewModels
                     JoggingList = new ObservableCollection<Jogging>(JoggingHandler.Instance.GetJogging());
                     JoggingHandler.Instance.Save();
                     JoggingError = "";
+                    ResetStopWatch(o);
                     Back(o);
                 }
             });
@@ -252,46 +297,67 @@ namespace FitnessTracker.ViewModels
             ResetWatchCommand = new RelayCommand(ResetStopWatch);
 
 
+            //StartWatchCommand = new RelayCommand((o) =>
+            //{
+            //    if (StartOrPause == "Start")
+            //    {
+            //        StartStopWatch(o);
+            //        Device.StartTimer(TimeSpan.FromSeconds(0), () =>
+            //        {
+            //            Timejogging = stopwatch.Elapsed;
+            //            if (!stopwatch.IsRunning)
+            //            {
+            //                return false;
+            //            }
+            //            else
+            //            {
+            //                return true;
+            //            }
+            //        });
+            //        StartOrPause = "Pause";
+            //    }
+            //    else if (StartOrPause == "Pause")
+            //    {
+            //        PauseStopWatch(o);
+            //        StartOrPause = "Resume";
+            //    }
+            //    else if (StartOrPause == "Resume")
+            //    {
+            //        StartStopWatch(o);
+            //        Device.StartTimer(TimeSpan.FromSeconds(0), () =>
+            //        {
+            //            Timejogging = stopwatch.Elapsed;
+
+            //            if (!stopwatch.IsRunning)
+            //            {
+            //                return false;
+            //            }
+            //            else
+            //            {
+            //                return true;
+            //            }
+            //        });
+            //        StartOrPause = "Pause";
+            //    }
+            //});
+
             StartWatchCommand = new RelayCommand((o) =>
             {
                 if (StartOrPause == "Start")
                 {
-                    StartStopWatch(o);
-                    Device.StartTimer(TimeSpan.FromSeconds(0), () =>
-                    {
-                        Timejogging = stopwatch.Elapsed;
-                        if (!stopwatch.IsRunning)
-                        {
-                            return false;
-                        }
-                        else
-                        {
-                            return true;
-                        }
-                    });
+                    StartJoggingTimer();
                     StartOrPause = "Pause";
                 }
                 else if (StartOrPause == "Pause")
                 {
-                    PauseStopWatch(o);
+                    ts.Cancel();
+                    //ts.Dispose(); erst später?
+                    TimeBeforePause = Timejogging;
                     StartOrPause = "Resume";
                 }
                 else if (StartOrPause == "Resume")
                 {
-                    StartStopWatch(o);
-                    Device.StartTimer(TimeSpan.FromSeconds(0), () =>
-                    {
-                        Timejogging = stopwatch.Elapsed;
-
-                        if (!stopwatch.IsRunning)
-                        {
-                            return false;
-                        }
-                        else
-                        {
-                            return true;
-                        }
-                    });
+                    StartJoggingTimer();
                     StartOrPause = "Pause";
                 }
             });
@@ -318,7 +384,7 @@ namespace FitnessTracker.ViewModels
                     CreateChart();
                     ErrorDateBodyWeightChartView = "";
                 }
-                ChartBodyWeight = new LineChart() 
+                ChartBodyWeight = new LineChart()
                 {
                     Entries = entriesBodyWeight,
                     PointSize = 50,
@@ -340,7 +406,6 @@ namespace FitnessTracker.ViewModels
 
             return status;
         }
-
         public static async Task<PermissionStatus> CheckAndRequestStorageReadPermission()
         {
             var status = await Permissions.CheckStatusAsync<Permissions.StorageRead>();
@@ -352,10 +417,29 @@ namespace FitnessTracker.ViewModels
 
             return status;
         }
-        //void OnPropertyChanged(string name)
-        //{
-        //    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        //}
+
+        public void StartJoggingTimer()
+        {
+            StartTimer = DateTime.Now;
+            ts = new CancellationTokenSource();
+            ct = ts.Token;
+            Task.Factory.StartNew(() =>
+            {
+                while (true)
+                {
+                    Timejogging = (DateTime.Now - StartTimer) + TimeBeforePause;
+                    Thread.Sleep(1000);
+                    if (ct.IsCancellationRequested)
+                    {
+                        break;
+                    }
+                }
+            }, ct);
+        }
+        void OnPropertyChanged(string name)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
         public void StartStopWatch(object o)
         {
             stopwatch.Start();
@@ -364,9 +448,17 @@ namespace FitnessTracker.ViewModels
         {
             stopwatch.Stop();
         }
+        //public void ResetStopWatch(object o)
+        //{
+        //    stopwatch.Reset();
+        //    Timejogging = TimeSpan.Zero;
+        //    StartOrPause = "Start";
+        //}
         public void ResetStopWatch(object o)
         {
-            stopwatch.Reset();
+            ts.Cancel();
+            ts.Dispose();
+            TimeBeforePause = TimeSpan.Zero;
             Timejogging = TimeSpan.Zero;
             StartOrPause = "Start";
         }
@@ -380,7 +472,7 @@ namespace FitnessTracker.ViewModels
                 {
                     Color = SKColor.Parse("#00CED1"),
                     Label = item.ShowDate,
-                    ValueLabel = item.Weight.ToString() +" kg | " + item.BodyFat.ToString() + " %"
+                    ValueLabel = item.Weight.ToString() + " kg | " + item.BodyFat.ToString() + " %"
                 };
                 entriesBodyWeight.Add(entry);
             }
@@ -399,6 +491,8 @@ namespace FitnessTracker.ViewModels
                 entriesBodyWeight.Add(entry);
             }
         }
+
+
     }
 }
 
