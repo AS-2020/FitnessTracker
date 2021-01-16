@@ -17,20 +17,5 @@ namespace FitnessTracker.Pages
         {
             InitializeComponent();
         }
-
-        private void NewEntryBodyWeight_Clicked(object sender, EventArgs e)
-        {
-            Navigation.PushAsync(new NewEntryBodyWeight());
-        }
-
-        private void BackButton_Clicked(object sender, EventArgs e)
-        {
-            Navigation.PopAsync();
-        }
-
-        private void NewEntryJogging_Clicked(object sender, EventArgs e)
-        {
-            Navigation.PushAsync(new NewEntryJogging());
-        }
     }
 }

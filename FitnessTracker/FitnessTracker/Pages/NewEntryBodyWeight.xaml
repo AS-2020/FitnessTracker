@@ -47,7 +47,7 @@
             </StackLayout>
             <StackLayout Grid.Row="4" Grid.ColumnSpan="2" HorizontalOptions="Center" Orientation="Horizontal">
                 <Button Text="Save" Command="{Binding SaveCommand}"/>
-                <Button Text="Back" Command="{Binding BackCommand}"/>
+                <Button Text="Back" Command="{Binding NavigationCommand}" CommandParameter="Back"/>
             </StackLayout>
             <Label Grid.Row="3" Text="{Binding BodyWeightError}" VerticalOptions="Center" HorizontalOptions="Center"/>
         </Grid>

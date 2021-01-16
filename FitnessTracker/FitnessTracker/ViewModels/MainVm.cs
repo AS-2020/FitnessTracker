@@ -12,6 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -33,7 +34,8 @@ namespace FitnessTracker.ViewModels
             set
             {
                 _startOrPause = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("StartOrPause"));
+                OnPropertyChanged("StartOrPause");
+                //PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("StartOrPause"));
             }
         }
         private const string THEPW = "123";
@@ -200,6 +202,14 @@ namespace FitnessTracker.ViewModels
         public static CancellationTokenSource ts; // = new CancellationTokenSource();
         public CancellationToken ct; //= ts.Token;
 
+        private ICommand _navigationCommand;
+        public ICommand NavigationCommand
+        {
+            get
+            {
+                return _navigationCommand ?? (_navigationCommand = new RelayCommand(SelectNewPage));
+            }
+        }
 
 
         public RelayCommand SaveCommand { get; set; }
@@ -210,11 +220,7 @@ namespace FitnessTracker.ViewModels
         public RelayCommand DeleteJoggingCommand { get; set; }
         public RelayCommand DeleteBodyWeightCommand { get; set; }
         public RelayCommand CreateBodyWeightChartCommand { get; set; }
-
-        public void Back(object o)
-        {
-            Xamarin.Forms.Application.Current.MainPage.Navigation.PopAsync();
-        }
+        public RelayCommand ExitCommand { get; set; }
 
 
         public MainVm()
@@ -292,54 +298,9 @@ namespace FitnessTracker.ViewModels
                     Back(o);
                 }
             });
+            ExitCommand = new RelayCommand((o) => System.Environment.Exit(0));
 
-            BackCommand = new RelayCommand(Back);
             ResetWatchCommand = new RelayCommand(ResetStopWatch);
-
-
-            //StartWatchCommand = new RelayCommand((o) =>
-            //{
-            //    if (StartOrPause == "Start")
-            //    {
-            //        StartStopWatch(o);
-            //        Device.StartTimer(TimeSpan.FromSeconds(0), () =>
-            //        {
-            //            Timejogging = stopwatch.Elapsed;
-            //            if (!stopwatch.IsRunning)
-            //            {
-            //                return false;
-            //            }
-            //            else
-            //            {
-            //                return true;
-            //            }
-            //        });
-            //        StartOrPause = "Pause";
-            //    }
-            //    else if (StartOrPause == "Pause")
-            //    {
-            //        PauseStopWatch(o);
-            //        StartOrPause = "Resume";
-            //    }
-            //    else if (StartOrPause == "Resume")
-            //    {
-            //        StartStopWatch(o);
-            //        Device.StartTimer(TimeSpan.FromSeconds(0), () =>
-            //        {
-            //            Timejogging = stopwatch.Elapsed;
-
-            //            if (!stopwatch.IsRunning)
-            //            {
-            //                return false;
-            //            }
-            //            else
-            //            {
-            //                return true;
-            //            }
-            //        });
-            //        StartOrPause = "Pause";
-            //    }
-            //});
 
             StartWatchCommand = new RelayCommand((o) =>
             {
@@ -418,6 +379,26 @@ namespace FitnessTracker.ViewModels
             return status;
         }
 
+        public void Back(object o)
+        {
+            Xamarin.Forms.Application.Current.MainPage.Navigation.PopAsync();
+        }
+        public void SelectNewPage(object message)
+        {
+            try
+            {
+                if (message == null)
+                {
+                    return;
+                }
+                INavigationHandler handler = NavigationHandlerFactory.GetNavigationHandler(message.ToString());
+                handler.ExecuteNewPage(message, new EventArgs());
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
         public void StartJoggingTimer()
         {
             StartTimer = DateTime.Now;
@@ -440,20 +421,6 @@ namespace FitnessTracker.ViewModels
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
-        public void StartStopWatch(object o)
-        {
-            stopwatch.Start();
-        }
-        public void PauseStopWatch(object o)
-        {
-            stopwatch.Stop();
-        }
-        //public void ResetStopWatch(object o)
-        //{
-        //    stopwatch.Reset();
-        //    Timejogging = TimeSpan.Zero;
-        //    StartOrPause = "Start";
-        //}
         public void ResetStopWatch(object o)
         {
             ts.Cancel();
@@ -491,7 +458,6 @@ namespace FitnessTracker.ViewModels
                 entriesBodyWeight.Add(entry);
             }
         }
-
 
     }
 }

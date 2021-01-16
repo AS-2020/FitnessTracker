@@ -17,9 +17,5 @@ namespace FitnessTracker.Pages
             InitializeComponent();
         }
 
-        private void BachButton_Clicked(object sender, EventArgs e)
-        {
-            Navigation.PopAsync();
-        }
     }
 }

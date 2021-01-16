@@ -8,10 +8,11 @@
     </ContentPage.BindingContext>
     <ContentPage.Content>
         <StackLayout HorizontalOptions="Center" VerticalOptions="Center">
-            <Button Text="New Entry" Clicked="NewEntry_Clicked"/>
-            <Button Text="View Entries" Clicked="ViewEntries_Clicked" />
-            <Button Text="Delete Entries" Clicked="DeleteEntries_Clicked" />
-            <Button Text="Exit" Clicked="ExitButton_Clicked"/>
+            <Button Text="New Entry"  Command="{Binding NavigationCommand}" CommandParameter="NewEntry"/>
+            <!--Clicked="NewEntry_Clicked"-->
+            <Button Text="View Entries" Command="{Binding NavigationCommand}" CommandParameter="ViewEntries"/>
+            <Button Text="Delete Entries" Command="{Binding NavigationCommand}" CommandParameter="DeleteEntries"/>
+            <Button Text="Exit" Command="{Binding ExitCommand}"/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

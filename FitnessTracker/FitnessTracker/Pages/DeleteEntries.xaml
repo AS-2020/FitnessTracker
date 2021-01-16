@@ -10,7 +10,7 @@
             <Entry Placeholder="Password" Text="{Binding Password}"/>
             <Button Text="Delete BodyWeight" Command="{Binding DeleteBodyWeightCommand}"/>
             <Button Text="Delete Jogging" Command="{Binding DeleteJoggingCommand}"/>
-            <Button class="Back_Button" Text="Back" Command="{Binding BackCommand}"/>
+            <Button Text="Back" Command="{Binding NavigationCommand}" CommandParameter="Back"/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

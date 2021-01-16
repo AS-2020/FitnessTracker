@@ -40,7 +40,7 @@
             </StackLayout>
             <StackLayout Grid.Row="4" HorizontalOptions="Center" Orientation="Horizontal">
                 <Button Text="Save" Command="{Binding SaveJoggingCommand}"/>
-                <Button Text="Back" Command="{Binding BackCommand}"/>
+                <Button Text="Back" Command="{Binding NavigationCommand}" CommandParameter="Back"/>
             </StackLayout>
             <Label Grid.Row="3" Text="{Binding JoggingError}" VerticalOptions="Center" HorizontalOptions="Center"/>
         </Grid>

@@ -19,23 +19,6 @@ namespace FitnessTracker.Pages
         public NewEntryBodyWeight()
         {
             InitializeComponent();
-            //Models.BodyWeightHandler.localPath = Path.Combine(FileSystem.AppDataDirectory, BodyWeightHandler.FILENAME);
-        }
-
-        private void BackButton_Clicked(object sender, EventArgs e)
-        {
-            Navigation.PopAsync();
-        }
-
-       // private void SaveBodyweight_Clicked(object sender, EventArgs e)
-       // {
-       //     Models.BodyWeight bodyWeight = new Models.BodyWeight()
-       //     {
-       //        // DateTime = 
-       //     };
-       //
-       //     Navigation.PopAsync();
-       // }
-                
+        } 
     }
 }

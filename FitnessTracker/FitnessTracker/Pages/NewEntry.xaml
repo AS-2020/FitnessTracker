@@ -8,9 +8,9 @@
     </ContentPage.BindingContext>
     <ContentPage.Content>
         <StackLayout HorizontalOptions="Center" VerticalOptions="Center">
-            <Button Text="Bodyweight" Clicked="NewEntryBodyWeight_Clicked"/>
-            <Button Text="Jogging" Clicked="NewEntryJogging_Clicked"/>
-            <Button class="Back_Button" Text="Back" Command="{Binding BackCommand}"/>
+            <Button Text="Bodyweight" Command="{Binding NavigationCommand}" CommandParameter="NewEntryBodyWeight"/>
+            <Button Text="Jogging" Command="{Binding NavigationCommand}" CommandParameter="NewEntryJogging"/>
+            <Button Text="Back" Command="{Binding NavigationCommand}" CommandParameter="Back"/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

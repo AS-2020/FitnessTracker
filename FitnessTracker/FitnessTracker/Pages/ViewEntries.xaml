@@ -7,10 +7,10 @@
     </ContentPage.BindingContext>
     <ContentPage.Content>
         <StackLayout HorizontalOptions="Center" VerticalOptions="Center">
-            <Button Text="View Bodyweight" Clicked="ViewBodyWeight_Clicked"/>
-            <Button Text="View Bodyweight Chart" Clicked="ViewBodyWeightChart_Clicked"/>
-            <Button Text="View Jogging" Clicked="ViewJogging_Clicked"/>
-            <Button Text="Back" Command="{Binding BackCommand}"/>
+            <Button Text="View Bodyweight" Command="{Binding NavigationCommand}" CommandParameter="ViewBodyWeight"/>
+            <Button Text="View Bodyweight Chart" Command="{Binding NavigationCommand}" CommandParameter="ViewBodyWeightChart"/>
+            <Button Text="View Jogging" Command="{Binding NavigationCommand}" CommandParameter="ViewJogging"/>
+            <Button Text="Back" Command="{Binding NavigationCommand}" CommandParameter="Back"/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

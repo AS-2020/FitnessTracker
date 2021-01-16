@@ -16,6 +16,7 @@ namespace FitnessTracker.Helper
             _execute = execute;
         }
 
+
         public bool CanExecute(object parameter)
         {
             return true;
@@ -25,5 +26,9 @@ namespace FitnessTracker.Helper
         {
             _execute?.Invoke(parameter);
         }
+        
     }
+
+    //RelayCommand(OnEdit);
+    
 }

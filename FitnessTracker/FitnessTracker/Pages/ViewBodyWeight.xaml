@@ -44,7 +44,8 @@
                 </ListView.ItemTemplate>
             </ListView>
             <StackLayout Grid.Row="2" HorizontalOptions="Center" Orientation="Horizontal">
-                <Button Text="Back" Command="{Binding BackCommand}"/>
+                <Button Text="Back" Command="{Binding NavigationCommand}" CommandParameter="Back"/>
+                <Button Text="Change" Command="{Binding BackCommand}"/>
             </StackLayout>
         </Grid>
     </ContentPage.Content>
