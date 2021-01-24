@@ -233,12 +233,6 @@ namespace FitnessTracker.ViewModels
         public MainVm()
         {
             _instance = this;
-            //SelectedBodyWeight = new BodyWeight()  // damit nicht null noch ändern oben date = selectedbodyweight.date usw
-            //{
-            //    Date_asDate = DateTime.Now,
-            //    Weight = 0,
-            //    BodyFat = 0
-            //};
             BodyWeightHandler.Instance.Load();
             BodyWeightList = new ObservableCollection<BodyWeight>(BodyWeightHandler.Instance.GetBodyWeight());
             JoggingHandler.Instance.Load();

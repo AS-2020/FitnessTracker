@@ -61,7 +61,6 @@ namespace FitnessTracker.ViewModels
             }
         }
         public RelayCommand SaveCommand { get; set; }
-        //public RelayCommand BackCommand { get; set; }
 
         public NewEntryBodyWeightVm()
         {
@@ -91,7 +90,8 @@ namespace FitnessTracker.ViewModels
                             Weight = Weight,
                             BodyFat = BodyFat
                         };
-                        BodyWeightHandler.Instance.RemoveBodyWeight(old);
+                        if (old != null)
+                            BodyWeightHandler.Instance.RemoveBodyWeight(old);
                         BodyWeightHandler.Instance.AddBodyWeight(bodyWeight);
                         MainVm.Instance.BodyWeightList = new ObservableCollection<BodyWeight>(BodyWeightHandler.Instance.GetBodyWeight());
                         BodyWeightHandler.Instance.Save();
@@ -100,12 +100,8 @@ namespace FitnessTracker.ViewModels
                     }
                 }
             });
-            //BackCommand = new RelayCommand(MainVm.Instance.Back);
         }
-        //public void Back(object o)
-        //{
-        //    Xamarin.Forms.Application.Current.MainPage.Navigation.PopAsync();
-        //}
+
 
     }
 }

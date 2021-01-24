@@ -3,11 +3,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:vm="clr-namespace:FitnessTracker.ViewModels"
              x:Class="FitnessTracker.Pages.NewEntryJogging">
     <ContentPage.BindingContext>
-        <vm:MainVm StartOrPause="Start"/>
+        <vm:NewEntryJoggingVm StartOrPause="Start"/>
     </ContentPage.BindingContext>
     <ContentPage.Content>
         <Grid Padding="20,10,10,20" VerticalOptions="Center" HorizontalOptions="Center">
             <Grid.RowDefinitions>
+                <RowDefinition Height="2*"/>
                 <RowDefinition Height="2*"/>
                 <RowDefinition Height="2*"/>
                 <RowDefinition Height="2*"/>
@@ -20,11 +21,21 @@
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
+                    <Label Grid.Column="0" Text="Track route" VerticalOptions="Center" HorizontalOptions="Center"/>
+                    <Switch Grid.Column="1" IsToggled="{Binding SwitchIsToggled}" VerticalOptions="Center" HorizontalOptions="Center" />
+                </Grid>
+            </StackLayout>
+            <StackLayout Grid.Row="1">
+                <Grid >
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
                     <Label Grid.Column="0" Text="Date" VerticalOptions="Center" HorizontalOptions="Center"/>
                     <Entry Grid.Column="1" Text="{Binding Date}" VerticalOptions="Center" HorizontalOptions="Center" />
                 </Grid>
             </StackLayout>
-            <StackLayout Grid.Row="1">
+            <StackLayout Grid.Row="2">
                 <Grid >
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
@@ -34,7 +45,7 @@
                     <Entry Grid.ColumnSpan="2" Text="{Binding Timejogging}" IsReadOnly="True" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" />
                 </Grid>
             </StackLayout>
-            <StackLayout Grid.Row="2" HorizontalOptions="Center" Orientation="Horizontal">
+            <StackLayout Grid.Row="3" HorizontalOptions="Center" Orientation="Horizontal">
                     <Button Grid.Column="0" Text="{Binding StartOrPause}" Command="{Binding StartWatchCommand}" VerticalOptions="Center" HorizontalOptions="Center"/>
                     <Button Grid.Column="1" Text="Reset" VerticalOptions="Center" Command="{Binding ResetWatchCommand}" HorizontalOptions="Center"/>
             </StackLayout>
@@ -42,7 +53,7 @@
                 <Button Text="Save" Command="{Binding SaveJoggingCommand}"/>
                 <Button Text="Back" Command="{Binding NavigationCommand}" CommandParameter="Back"/>
             </StackLayout>
-            <Label Grid.Row="3" Text="{Binding JoggingError}" VerticalOptions="Center" HorizontalOptions="Center"/>
+            <Label Grid.Row="5" Text="{Binding JoggingError}" VerticalOptions="Center" HorizontalOptions="Center"/>
         </Grid>
     </ContentPage.Content>
 </ContentPage>
