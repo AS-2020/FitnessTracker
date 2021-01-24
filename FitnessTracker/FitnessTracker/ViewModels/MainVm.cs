@@ -1,5 +1,6 @@
 ﻿using FitnessTracker.Helper;
 using FitnessTracker.Models;
+using FitnessTracker.Pages;
 using Microcharts;
 using SkiaSharp;
 using System;
@@ -23,10 +24,30 @@ namespace FitnessTracker.ViewModels
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public ObservableCollection<BodyWeight> BodyWeightList { get; set; }
+        private static MainVm _instance;
+        public static MainVm Instance
+        {
+            get
+            {
+                if (_instance == null)
+                {
+                    _instance = new MainVm();
+                }
+                return _instance;
+            }
+        }
+        private ObservableCollection<BodyWeight> bodyWeightList;
+        public ObservableCollection<BodyWeight> BodyWeightList
+        {
+            get { return bodyWeightList; }
+            set
+            {
+                bodyWeightList = value;
+                OnPropertyChanged("BodyWeightList");
+            }
+        }
         public ObservableCollection<Jogging> JoggingList { get; set; }
 
-        private Stopwatch stopwatch = new Stopwatch();
         private string _startOrPause = "Start";
         public string StartOrPause
         {
@@ -116,7 +137,7 @@ namespace FitnessTracker.ViewModels
             set
             {
                 date = value;
-                //PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Date"));
+                OnPropertyChanged("Date");
             }
         }
 
@@ -127,7 +148,7 @@ namespace FitnessTracker.ViewModels
             set
             {
                 _weight = value;
-                //PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Weight"));
+                OnPropertyChanged("Weight");
             }
         }
         private float _bodyFat;
@@ -137,7 +158,7 @@ namespace FitnessTracker.ViewModels
             set
             {
                 _bodyFat = value;
-                //PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("BodyFat"));
+                OnPropertyChanged("BodyFat");
             }
         }
 
@@ -174,34 +195,10 @@ namespace FitnessTracker.ViewModels
         }
         public TimeSpan TimeBeforePause { get; set; }
         public Task Timer { get; set; }
-        //private static CancellationTokenSource ts = new CancellationTokenSource();
-
-        //public CancellationTokenSource Ts
-        //{
-        //    get
-        //    {
-        //        return ts;
-        //    }
-        //    set
-        //    {
-        //        ts = value;
-        //    }
-        //}
-        //public CancellationToken ct = ts.Token;
-        //public CancellationToken Ct
-        //{
-        //    get
-        //    {
-        //        return ct;
-        //    }
-        //    set
-        //    {
-        //        ct = value;
-        //    }
-        //}
-        public static CancellationTokenSource ts; // = new CancellationTokenSource();
-        public CancellationToken ct; //= ts.Token;
-
+        private static CancellationTokenSource tokenSourceJoggingTimer; // = new CancellationTokenSource();
+        public static CancellationTokenSource TokenSourceJoggingTimer { get; set; }
+        private CancellationToken cancellationTokenJoggingTimer; //= ts.Token;
+        public CancellationToken CancellationTokenJoggingTimer { get; set; }
         private ICommand _navigationCommand;
         public ICommand NavigationCommand
         {
@@ -210,6 +207,15 @@ namespace FitnessTracker.ViewModels
                 return _navigationCommand ?? (_navigationCommand = new RelayCommand(SelectNewPage));
             }
         }
+        public bool CheckBodyWeightChange { get; set; }
+        private BodyWeight selectedBodyWeight;
+
+        public BodyWeight SelectedBodyWeight
+        {
+            get { return selectedBodyWeight; }
+            set { selectedBodyWeight = value; }
+        }
+
 
 
         public RelayCommand SaveCommand { get; set; }
@@ -221,10 +227,18 @@ namespace FitnessTracker.ViewModels
         public RelayCommand DeleteBodyWeightCommand { get; set; }
         public RelayCommand CreateBodyWeightChartCommand { get; set; }
         public RelayCommand ExitCommand { get; set; }
+        public RelayCommand ChangeBodyWeightCommand { get; set; }
 
 
         public MainVm()
         {
+            _instance = this;
+            //SelectedBodyWeight = new BodyWeight()  // damit nicht null noch ändern oben date = selectedbodyweight.date usw
+            //{
+            //    Date_asDate = DateTime.Now,
+            //    Weight = 0,
+            //    BodyFat = 0
+            //};
             BodyWeightHandler.Instance.Load();
             BodyWeightList = new ObservableCollection<BodyWeight>(BodyWeightHandler.Instance.GetBodyWeight());
             JoggingHandler.Instance.Load();
@@ -232,7 +246,7 @@ namespace FitnessTracker.ViewModels
 
             SaveCommand = new RelayCommand((o) =>
             {
-                if (BodyWeightHandler.Instance.GetBodyWeight().Find(e => e.ShowDate == Date) != null)
+                if (BodyWeightHandler.Instance.GetBodyWeight().Find(e => e.ShowDate == Date) != null && CheckBodyWeightChange)
                 {
                     BodyWeightError = "There alredy exists an entry for this day";
                 }
@@ -242,18 +256,20 @@ namespace FitnessTracker.ViewModels
                 }
                 else
                 {
-                    BodyWeight bodyWeight = new BodyWeight()
+                    if (DateTime.TryParse(Date, out DateTime notused) == true)
                     {
-                        Date_asDate = DateTime.Parse(Date),
-                        Weight = Weight,
-                        BodyFat = BodyFat
-
-                    };
-                    BodyWeightHandler.Instance.AddBodyWeight(bodyWeight);
-                    BodyWeightList = new ObservableCollection<BodyWeight>(BodyWeightHandler.Instance.GetBodyWeight());
-                    BodyWeightHandler.Instance.Save();
-                    BodyWeightError = "";
-                    Back(o);
+                        BodyWeight bodyWeight = new BodyWeight()
+                        {
+                            Date_asDate = DateTime.Parse(Date),
+                            Weight = Weight,
+                            BodyFat = BodyFat
+                        };
+                        BodyWeightHandler.Instance.AddBodyWeight(bodyWeight);
+                        BodyWeightList = new ObservableCollection<BodyWeight>(BodyWeightHandler.Instance.GetBodyWeight());
+                        BodyWeightHandler.Instance.Save();
+                        ClearBodyWeight();
+                        Back(o);
+                    }
                 }
             });
 
@@ -311,7 +327,7 @@ namespace FitnessTracker.ViewModels
                 }
                 else if (StartOrPause == "Pause")
                 {
-                    ts.Cancel();
+                    TokenSourceJoggingTimer.Cancel();
                     //ts.Dispose(); erst später?
                     TimeBeforePause = Timejogging;
                     StartOrPause = "Resume";
@@ -353,7 +369,17 @@ namespace FitnessTracker.ViewModels
                     LineSize = 40
                 };
             });
+            ChangeBodyWeightCommand = new RelayCommand((o) =>
+            {
 
+                CheckBodyWeightChange = true;
+                Instance.Date = SelectedBodyWeight.ShowDate;
+                Instance.Weight = SelectedBodyWeight.Weight;
+                Instance.BodyFat = SelectedBodyWeight.BodyFat;
+
+                Xamarin.Forms.Application.Current.MainPage.Navigation.PushAsync(new NewEntryBodyWeight());
+
+            });
         }
 
         public static async Task<PermissionStatus> CheckAndRequestStorageWritePermission()
@@ -379,6 +405,35 @@ namespace FitnessTracker.ViewModels
             return status;
         }
 
+        public void ClearBodyWeight()
+        {
+            Date = DateTime.Now.ToShortDateString();
+            Weight = 0;
+            BodyFat = 0;
+            BodyWeightError = "";
+            CheckBodyWeightChange = false;
+        }
+        public void SelectBodyWeight(object o)
+        {
+            //try
+            //{
+            //    BodyWeight bodyWeight = SelectedBodyWeight;//SelectedKunde.LastOrDefault<Kunde>();
+            //    KundenNummer = k.KundenNummer;
+            //    NameFirma = k.NameFirma;
+            //    AdresseKunde = k.AdresseKunde;
+            //    Ansprechpartner = k.Ansprechpartner;
+            //    Telefonnummer = k.Telefonnummer;
+            //    Aktiv = k.Aktiv;
+            //    AendernButton = true;
+            //    KundenNummerTextBox = true;
+
+            //}
+            //catch (System.ArgumentNullException)
+            //{
+
+            //}
+
+        }
         public void Back(object o)
         {
             Xamarin.Forms.Application.Current.MainPage.Navigation.PopAsync();
@@ -402,20 +457,20 @@ namespace FitnessTracker.ViewModels
         public void StartJoggingTimer()
         {
             StartTimer = DateTime.Now;
-            ts = new CancellationTokenSource();
-            ct = ts.Token;
+            TokenSourceJoggingTimer = new CancellationTokenSource();
+            CancellationTokenJoggingTimer = TokenSourceJoggingTimer.Token;
             Task.Factory.StartNew(() =>
             {
                 while (true)
                 {
                     Timejogging = (DateTime.Now - StartTimer) + TimeBeforePause;
                     Thread.Sleep(1000);
-                    if (ct.IsCancellationRequested)
+                    if (CancellationTokenJoggingTimer.IsCancellationRequested)
                     {
                         break;
                     }
                 }
-            }, ct);
+            }, CancellationTokenJoggingTimer);
         }
         void OnPropertyChanged(string name)
         {
@@ -423,8 +478,8 @@ namespace FitnessTracker.ViewModels
         }
         public void ResetStopWatch(object o)
         {
-            ts.Cancel();
-            ts.Dispose();
+            TokenSourceJoggingTimer.Cancel();
+            TokenSourceJoggingTimer.Dispose();
             TimeBeforePause = TimeSpan.Zero;
             Timejogging = TimeSpan.Zero;
             StartOrPause = "Start";

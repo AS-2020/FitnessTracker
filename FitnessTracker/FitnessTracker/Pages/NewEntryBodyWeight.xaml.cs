@@ -14,7 +14,6 @@ namespace FitnessTracker.Pages
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class NewEntryBodyWeight : ContentPage
     {
-        
 
         public NewEntryBodyWeight()
         {

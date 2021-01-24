@@ -59,6 +59,11 @@ namespace FitnessTracker.Models
             bodyWeightList.Add(bodyWeight);
             bodyWeightList = bodyWeightList.OrderBy(d => d.Date_asDate).ToList();
         }
+        public void RemoveBodyWeight(BodyWeight bodyWeight)
+        {
+            bodyWeightList.Remove(bodyWeight);
+            bodyWeightList = bodyWeightList.OrderBy(d => d.Date_asDate).ToList();
+        }
 
         public List<BodyWeight> GetBodyWeight()
         {

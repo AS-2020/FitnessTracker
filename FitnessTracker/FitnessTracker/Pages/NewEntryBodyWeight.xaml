@@ -4,7 +4,7 @@
              x:Class="FitnessTracker.Pages.NewEntryBodyWeight"
              xmlns:vm="clr-namespace:FitnessTracker.ViewModels">
     <ContentPage.BindingContext>
-        <vm:MainVm />
+        <vm:NewEntryBodyWeightVm />
     </ContentPage.BindingContext>
     <ContentPage.Content>
         <Grid Padding="20,10,10,20" VerticalOptions="Center" HorizontalOptions="Center" >
@@ -22,7 +22,7 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <Label Grid.Column="0" Text="Date" VerticalOptions="Center" HorizontalOptions="Center"/>
-                    <Entry Grid.Column="1" Text="{Binding Date}" VerticalOptions="Center" HorizontalOptions="Center" />
+                    <Entry Grid.Column="1" Text="{Binding Date}" IsReadOnly="{Binding DateIsReadOnly}" VerticalOptions="Center" HorizontalOptions="Center" />
                 </Grid>
             </StackLayout>
             <StackLayout Grid.Row="1" >

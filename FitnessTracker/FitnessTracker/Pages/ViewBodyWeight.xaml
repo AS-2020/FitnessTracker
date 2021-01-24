@@ -13,7 +13,7 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <Label Grid.Row="0" Text="Bodyweight" HorizontalOptions="Center" HorizontalTextAlignment="Center" Padding="10" FontAttributes="Bold" VerticalTextAlignment="Center" FontSize="16"/>
-            <ListView Grid.Row="1" ItemsSource="{Binding BodyWeightList}">
+            <ListView Grid.Row="1" ItemsSource="{Binding BodyWeightList}" SelectedItem="{Binding SelectedBodyWeight}">
                 <ListView.Header>
                     <Grid BackgroundColor="LightBlue">
                         <Grid.ColumnDefinitions>
@@ -37,7 +37,7 @@
                                 </Grid.ColumnDefinitions>
                                 <Label Grid.Column="0" Text="{Binding ShowDate}" HorizontalOptions="Center" VerticalOptions="Center"/>
                                 <Label Grid.Column="1" Text="{Binding Weight}" HorizontalOptions="Center" VerticalOptions="Center"/>
-                                <Label Grid.Column="2" Text="{Binding BodyFat}" HorizontalOptions="Center" VerticalOptions="Center"/>
+                                <Label Grid.Column="2" Text="{Binding BodyFat}"  HorizontalOptions="Center" VerticalOptions="Center"/>
                             </Grid>
                         </ViewCell>
                     </DataTemplate>
@@ -45,7 +45,7 @@
             </ListView>
             <StackLayout Grid.Row="2" HorizontalOptions="Center" Orientation="Horizontal">
                 <Button Text="Back" Command="{Binding NavigationCommand}" CommandParameter="Back"/>
-                <Button Text="Change" Command="{Binding BackCommand}"/>
+                <Button Text="Change" Command="{Binding ChangeBodyWeightCommand}"/>
             </StackLayout>
         </Grid>
     </ContentPage.Content>
