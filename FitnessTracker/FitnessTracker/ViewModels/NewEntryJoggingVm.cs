@@ -1,4 +1,7 @@
-﻿using FitnessTracker.Helper;
+﻿using Android.App;
+using Android.Content;
+using Android.OS;
+using FitnessTracker.Helper;
 using FitnessTracker.Models;
 using System;
 using System.Collections.Generic;
@@ -25,7 +28,7 @@ namespace FitnessTracker.ViewModels
             }
         }
 
-        private bool _switchIsToggled = true;
+        private bool _switchIsToggled = false;
         public bool SwitchIsToggled
         {
             get { return _switchIsToggled; }
@@ -33,6 +36,7 @@ namespace FitnessTracker.ViewModels
             {
                 _switchIsToggled = value;
                 OnPropertyChanged("SwitchIsToggled");
+                StartTrackingRoute();
             }
         }
 
@@ -135,15 +139,15 @@ namespace FitnessTracker.ViewModels
                {
                    if (StartOrPause == "Start")
                    {
-                       StartTrackingRoute();
+                       //StartTrackingRoute(); wird beim einschalten des Switches ausgeführt
                        StartJoggingTimer();
                        StartOrPause = "Pause";
                    }
                    else if (StartOrPause == "Pause")
                    {
                        TokenSourceJoggingTimer.Cancel();
-                        //ts.Dispose(); erst später?
-                        TimeBeforePause = Timejogging;
+                       //ts.Dispose(); erst später?
+                       TimeBeforePause = Timejogging;
                        StartOrPause = "Resume";
                    }
                    else if (StartOrPause == "Resume")
@@ -162,8 +166,8 @@ namespace FitnessTracker.ViewModels
                    else if (StartOrPause == "Pause")
                    {
                        TokenSourceJoggingTimer.Cancel();
-                        //ts.Dispose(); erst später?
-                        TimeBeforePause = Timejogging;
+                       //ts.Dispose(); erst später?
+                       TimeBeforePause = Timejogging;
                        StartOrPause = "Resume";
                    }
                    else if (StartOrPause == "Resume")
@@ -176,17 +180,58 @@ namespace FitnessTracker.ViewModels
 
         }
 
+        public static async Task<PermissionStatus> CheckAndRequestGetLocationPermission()
+        {
+            var status = await Permissions.CheckStatusAsync<Permissions.LocationAlways>();
+
+            if (status == PermissionStatus.Granted)
+                return status;
+
+            status = await Permissions.RequestAsync<Permissions.LocationAlways>();
+
+            return status;
+        }
+
+        public bool IsGpsAvailable()
+        {
+            bool value = false;
+            Android.Locations.LocationManager manager = (Android.Locations.LocationManager)Android.App.Application.Context.GetSystemService(Android.Content.Context.LocationService);
+            if (!manager.IsProviderEnabled(Android.Locations.LocationManager.GpsProvider))
+            {
+                //gps disable
+                value = false;
+            }
+            else
+            {
+                //Gps enable
+                value = true;
+            }
+            return value;
+        }
+
+        public void OpenSettings()
+        {
+            Intent intent = new Android.Content.Intent(Android.Provider.Settings.ActionLocat‌​ionSourceSettings);
+            intent.AddFlags(ActivityFlags.NewTask);
+            Android.App.Application.Context.StartActivity(intent);
+        }
 
         public async void StartTrackingRoute()
         {
             try
             {
+                JoggingError = "Wait for GPS";
+                await CheckAndRequestGetLocationPermission();
+                if (IsGpsAvailable() == false)
+                {
+                    OpenSettings();
+                }
                 var location = await Geolocation.GetLastKnownLocationAsync();
                 if (location == null)
                 {
                     location = await Geolocation.GetLocationAsync(new GeolocationRequest
                     {
-                        DesiredAccuracy = GeolocationAccuracy.Medium,
+                        DesiredAccuracy = GeolocationAccuracy.High,
                         Timeout = TimeSpan.FromSeconds(30)
                     });
                 }
@@ -194,7 +239,7 @@ namespace FitnessTracker.ViewModels
                 if (location == null)
                     JoggingError = "No GPS";
                 else
-                    JoggingError = $"{location.Latitude} {location.Longitude}";
+                    JoggingError = $"GPS Latitude: {location.Latitude}; Longitude: {location.Longitude}";
 
             }
             catch (Exception)
@@ -203,6 +248,7 @@ namespace FitnessTracker.ViewModels
                 throw;
             }
         }
+
 
         public void StartJoggingTimer()
         {
